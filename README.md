@@ -2,10 +2,12 @@
 
 
 # CI & CD:
+
 ========
-  2 core software development processes
   
-  CI process of automating regular code commits followed by an automated build and test process designed to highlight intergration issues early.
+2 core software development processes
+  
+CI process of automating regular code commits followed by an automated build and test process designed to highlight intergration issues early.
 
 Additional tooling and functionality provided by Bamboo, CruiseControl, Jenkins, Go and TeamCity etc.
 workflow based
@@ -17,7 +19,9 @@ AWS CodeDeploy and CodePipeline provide CI/CD services
 Elasticbeanstalk and CFN provide functionality which can be utilized by CI/CD servers.
 
 ## Deployment Types:
+
 =================
+
 1. Single Target Deployment - small dev projects, legacy or non-HA infrastructure; outage occurs in case of failure, testing opportunity is limited.
 
 2. All-at-Once Deployment - deployment happens on multiple targets, requires Orchestration tools, suitable for non critical apps in 5-10 range.
@@ -45,7 +49,9 @@ Container/Docker: contains only application and dependencies, achieves higher de
 Escape for dependency hell, Consistent progression from DEV->TEST->QA->PROD, Isolation, resource scheduling at micro level, Extreme code portability, Micro-services; Docker Image(Read Only), Docker container (hold everything required to run), Layers/UFS (combines layers using UFS), Dockerfile, Docker Daemon/Engine, Docker Client (Interface between user and Docker Engine), Docker Registry/Hub (Private/Public store for Docker images)
 
 ## CloudFormation: 
+
 ================
+
 Building block service to provision infra within AWS, Elastic Beanstalk uses CFN, JSON format, Stack (CFN unit of grouping infra), Template (JSON doc giving instructions for CFN on how to act and what to create/update), Stack Policy (IAM style policy governs what/who can change, can be added via CLI or UI, updated but can not be removed)
 
 Create CFN template -> Add template to CFN -> Create CFNStack -> Resources (200 per template) -> Update template/Stack -> Delete Stack
@@ -60,7 +66,9 @@ Use cases:
 IMPORTANT: Template should be designed to work 1 or 1000 app in one or more regions.
 
 ## CloudFormation Structure:
+
 =========================
+
 Parameters - way of passing data into CFN template one or more values; ex: ip address, instance size, name, password etc;
 
 AWS::EC2::KeyPair:KeyName; Default value, Allowed values, Allowed Patterns, Min & MaxValue, Min & MaxLength;
@@ -70,7 +78,9 @@ references, pseudo parameters or an output from a function such as fn::GetAtt or
 as instance id; GetAtt provide alternate values such as private ip & public ip.
 
 ## Intrinsic & Conditional Functions
+
 =================================
+
 Intrinsic Fn - inbuilt function provided by AWS to help manage, reference, and condtionally act upon resources, situation & inputs to a stack.
 
 Fn::Base64 - Base64 encoding for User Data
@@ -90,7 +100,9 @@ Ref - default value of resource
 Conditional Functions - Fn::And, Fn::Equals, Fn::If, Fn::Not, Fn::Or
 
 ## Stack Creation & Depends On:
+
 ============================
+
 
 1.Template Upload/S3 Template reference
 
@@ -111,7 +123,9 @@ Conditional Functions - Fn::And, Fn::Equals, Fn::If, Fn::Not, Fn::Or
 DependsOn - influences automatic dependency checking of CFN; directs CFN how to handle dependencies;
 
 ## CFN Resource Deletion Policies:
+
 ===============================
+
 A policy/setting which is associated with each resource in a template; A way to control what happens to each resource when a stack is deleted.
 
 Policy value - Delete (Default), Retain, Snapshot
@@ -123,6 +137,7 @@ Retain - live beyond lifcycle of stack; Windows Server Platform (AD), Servers wi
 Snapshot - restricted policy type only available for EBS volumes; takes snapshot before deleting for recovering data.
 
 ## CFN Stack updates:
+
 =================
 
 stack policy is checked, updates can be prevented; absence of stack policy allow all updates; stack policy cannot be deleted once applied.
@@ -137,6 +152,7 @@ EBS Optimized, Changing Instance type - Some Interruptions
 Updating DynamoDB provisioned throughput - No Interruption
 
 ## CFN Nesting:
+
 ============
 
 to allow huge set of infra to be split over multiple templates, 460k template size limit for S3, 200 resource limit per template,
@@ -144,7 +160,9 @@ to allow huge set of infra to be split over multiple templates, 460k template si
 resource type - AWS::CloudFormation::Stack
 
 ## CFN Creation Policies, Wait Conditions & Wait Condition Handlers:
+
 =================================================================
+
 Influence when a resource is marked as competed - delaying until its actually ready.
 
 Creation Policies - only be used on EC2 instance and ASG. Creation Policy Definition & Signal Configuration
@@ -158,6 +176,7 @@ WC - 4 components 1) they DependOn the resources waiting on 2) a Handle property
 WCH - Signed URL
 
 ## CFN Custom Resources:
+
 =====================
 
 resource type within CFN that is backed by SNS or Lambda; Custom::ResourceName(SNSTopic or Lambda Function); ServiceToken - arn for SNS topic
@@ -168,7 +187,9 @@ Use cases: stack linked to on-premise resource creation, stack linked to advance
 advanced tidy operations - backup/montioring deactivation, stacks linked to on-premise CMS, web stack creation - linked to monitoring/penetration,testing system, stack creation/deletion updates a lambda based backup solution - EBS snapshotting, Stack deletion spawns account wide prunning for orphaned EBS volumes.
 
 ## OpsWorks Primer:
+
 ================
+
 AWS Impelementation of CHEF configuration management & automation system; allows to provision infra, but abstracts some details.
 
 Between CFN (overhead(JSON) and configurability) and Elastic Beanstalk (provides more power & customization).
@@ -194,6 +215,7 @@ Recipes & Cookbooks - Desired state engines; Recipes tell OpsWorks WHAT you want
 associated data to support them.
 
 ## OpsWorks Stacks & Layers
+
 =========================
 
 Creating Stack - Stack Name, region cannot be changed, VPC (instances need internet access to communicate with OpsWorks Orchestration Engine), Subnet can be changed, OS cannot be changed (windows/linux), SSH keys, Custom Cookbooks for Git, Advanced options (not changed mostly, can be changed later)
@@ -207,7 +229,9 @@ AN RDS INSTANCE CAN ONLY BE ASSOCIATED WITH ONE OPSWORKS STACK.
 A STACK CLONE OPERATION DOESNT COPY AN EXISTING RDS INSTANCE.
 
 ## OpsWorks Lifecycle Events
+
 ==========================
+
 Events can run manually using events stack run command functionality; When event occurs it runs set of recipes assigned to that event.
 Each layer has own recipes for that event. 
 
@@ -222,15 +246,18 @@ UNDEPLOY - Occurs when delete an application or run Undeploy command
 SHUTDOWN - Occurs when an instance is shutdown, but before its terminated; allows cleanup by running recipes
 
 ## OpsWorks Instances
+
 ==================
+
 Instances can be added to the layer or the stack instances menu; OpsWorks Instance Type - 24/7 (provisioned manually, started/stopped
 by admin), Time-based (intially provisioned and configured to power on/off at certains times during the day), Load-based (intially 
 provisioned and configured to power on/off based on configurable criteria; per layer scaling config)
 
-##OpsWorks Applications
+#### OpsWorks Applications
+
 =====================
-Applications - object which represent app and its meta data; App name, Doc root, Data Source(RDS/None), App source (Git/HTTP/S3),
-Env variables, Domain names, SSL enabled & settings
+
+Applications - object which represent app and its meta data; App name, Doc root, Data Source(RDS/None), App source (Git/HTTP/S3),Env variables, Domain names, SSL enabled & settings
 
 Deploying an Application - 
 
@@ -245,7 +272,9 @@ Deploying an Application -
 5. 5 versions of application maintained; current + previous 4 deployments
 
 #### OpsWorks Create Deployment cmd
+
 ===============================
+
 create-deployment: creates app deployments; allows stack level commands to be executed against stack
 Syntax: aws opsworks --region us-east-1 create-deployment
 
@@ -253,7 +282,9 @@ Syntax: aws opsworks --region us-east-1 create-deployment
 update_custom_cookbooks, execute_recipes, configure, setup, deploy, rollback, start, stop, restart & undeploy)
 
 #### Works Databags & berkself
+
 =============================
+
 Berkself - system which address one of Chef's initial shortcoming; OpsWorks < 11.10 version allows only one custom cookbook repo;
 11.10 and newer allow to install cookbook from multiple repo. Enable Berkshelf by selecting Use Custom Chef Cookbooks at stack level, 
 create berksfile at the root folder of custom repo.
@@ -266,7 +297,9 @@ multiple databags including STACK, LAYER, APP, INSTANCE; Data assessed via Chef 
 updated vi CUSTOM_JSON dialogue
 
 #### OpsWorks Autohealing
+
 ====================
+
 Each OpsWorks instance has agent installd; Instances perform ongoing heartbeat style healthchecks with OpsWorks Orchestartion engine;
 
 If heartbeat fails, OpsWorks treat instance as unhealthy and perform auto-heal; 
@@ -284,7 +317,9 @@ Auto-healing wont upgrade os of instances
 Auto-heal isn't a performance response, its a failure response.
 
 #### EB primer
+
 ===========
+
 allow to deploy, monitor and scale service quickly; PaaS; 
 
 Component Structure: 
@@ -303,8 +338,10 @@ Application Tier, Network Tier and Data Tier (Create DB outside Elastic Beanstal
 
 Use Elastic Beanstalk for non supported platform - via Docker
 
-Extending Beanstalk using Extensions
+#### Extending Beanstalk using Extensions
+
 ====================================
+
 .ebextensions is config folder within Elastic Beanstalk app source bundle; allows granular config of beanstalk env & customization of resources. Files are YAML formatted end with .config extension; .config file sections: option_settings(allows Global Config), resources, packages, sources, files, users, groups, commands, container_commands, service (allows customization of EC2 - similar to AWS::CloudFormation::Init)
 
 Leader Instance - EC2 instance within a Load balancing, Autoscaling Env, choosen to be leader/master; applied only during env creation;
@@ -312,7 +349,9 @@ once env is established, all nodes are equal; leader_only can be used with in co
 
 
 #### Docker in Elastic Beanstalk
+
 ===========================
+
 Use Elastic Beanstlk to host and run docker containers.
 Docker+EB Components: 
 
@@ -325,6 +364,7 @@ Dockerrun.aws.json file - AWS EB specific file and isn't involved in traditional
 allows EC2 <-> container mapping; points EB at where your application logs; .dockercfg - stored in S3; can be created using docker login registry-url; use this file as base and create auth file in S3 bucket;
 
 #### CloudWatch: 
+
 ============
 
 Metric gathering service, Monitoring/alerting service, A graphing service
@@ -474,6 +514,7 @@ AssumeRole session min 15 minutes, Max 1 hr, Default 1hr; GetFederationToken min
 allows seperation of responsibilities, minimize admin overhead.
 
 #### Custom Proxy - Console - AssumeRole
+
 ------------------------------------
 
 1. Corporate User Browse the Fed Proxy domain.com 
@@ -497,6 +538,7 @@ allows seperation of responsibilities, minimize admin overhead.
 10. User access URL and get console access
 
 #### Custom Proxy - API - GetFederationToken
+
 ---------------------------------------
 
 1. Corporate App browse Fed Proxy
@@ -516,6 +558,7 @@ allows seperation of responsibilities, minimize admin overhead.
 Both use cases needs an IAM user. GetFederationToken does not support MFA.
 
 #### SAML - Console - AssumeRoleWithSAML
+
 -----------------------------------
 
 1. Corporate user access AD FS
@@ -537,12 +580,14 @@ Both use cases needs an IAM user. GetFederationToken does not support MFA.
 No need to maintain dedicated Fed proxy for application, proxy doesnt need any IAM permission.
 
 #### Web Identity Federation
+
 =======================
 
 allows trusted third party to authneticate users; avoids to create and manage users; avoid users having multiple id's; simplifies access 
 control via roles.
 
 #### Standard Web Identity Federation
+
 ================================
 
 1. Mobile user autheticates with Web Identity provider
@@ -586,6 +631,7 @@ First step to Login to Web Identity provider, rest are same as unauthenticated f
 Enhanced flow, communicate all time with Cognito. pre-cognito auth flow, unautheticated or guest flow, simple cognito flow, enhanced cognito flow. why and when to use web id provider - when you need to publish app or service to thousands of users.
 
 #### High Availability and Elasticity:
+
 =================================
 
 Autoscaling - Autoscaling Group (Min, Desired,Max), Launch Configuration (AMI, Instance type, Keypair etc), Scaling Plan (Conditions/Dynamic, Time/Scheduled) Better fault tolerence, Better availabilty, Better cost management
@@ -854,6 +900,7 @@ AWS Data Pipeline is a web service that helps you reliably process and move data
 as well as on-premises data sources, at specified intervals. 
 
 #### AWS Data Pipeline Components:
+
 =============================
 
 - Tasks and Task Runner
@@ -871,6 +918,7 @@ as well as on-premises data sources, at specified intervals.
     -- Preconditions
 
 #### Compatible AWS Compute and Storage Services:
+
 ===========================================
 
 - EC2
@@ -886,6 +934,7 @@ as well as on-premises data sources, at specified intervals.
 - Amazon Redshift (Managed Data Warehouse)
 
 #### AWS Data Pipeline Use cases:
+
 =============================
 
 - Extract, Transform, Load (ETL) Operations
@@ -897,6 +946,7 @@ as well as on-premises data sources, at specified intervals.
 - Importing Data
 
 ####  AWS Data Pipeline Benefits:
+
 =============================
 
 - Reliable
